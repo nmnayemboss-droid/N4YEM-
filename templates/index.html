@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <title>NAYEM OFCL - Ultra Hosting Panel</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;900&family=Orbitron:wght@400;900&display=swap');
+
+        :root {
+            --bg-gradient: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #00d2ff);
+            --accent: #00ffcc;
+            --box-bg: rgba(0, 0, 0, 0.4);
+            --text-glow: rgba(0, 255, 204, 0.4);
+        }
+
+        [data-theme="cyber"] { --bg-gradient: linear-gradient(-45deg, #000, #1a0033, #000, #ff00ff); --accent: #ff00ff; --text-glow: rgba(255, 0, 255, 0.5); }
+        [data-theme="purple"] { --bg-gradient: linear-gradient(-45deg, #2d004d, #1a0033, #6a0572, #a4508b); --accent: #e0aaff; --text-glow: rgba(224, 170, 255, 0.5); }
+        [data-theme="sunset"] { --bg-gradient: linear-gradient(-45deg, #ff512f, #dd2476, #fb8c00, #ff512f); --accent: #ffd700; --text-glow: rgba(255, 215, 0, 0.5); }
+        [data-theme="matrix"] { --bg-gradient: linear-gradient(to bottom, #000, #050505); --accent: #00ff41; --text-glow: rgba(0, 255, 65, 0.5); }
+        [data-theme="3dcar"] { --bg-gradient: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460); --accent: #e94560; --text-glow: rgba(233, 69, 96, 0.5); }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+        body {
+            background: var(--bg-gradient);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: white;
+            min-height: 100vh;
+            padding-bottom: 180px;
+            overflow-x: hidden;
+            transition: 0.8s ease;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .status-badge {
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-left: 10px;
+            text-transform: uppercase;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+        }
+        .status-running {
+            background: rgba(0, 255, 65, 0.2);
+            color: #00ff41;
+            border: 1px solid #00ff41;
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+        }
+        .status-offline {
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+            border: 1px solid #ff4757;
+        }
+
+        .social-bar {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(15px);
+            padding: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            z-index: 1001;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            box-shadow: 0 -10px 25px rgba(0,0,0,0.5);
+        }
+
+        .social-icon {
+            color: white;
+            font-size: 24px;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            filter: drop-shadow(0 0 5px rgba(255,255,255,0.2));
+        }
+
+        .social-icon:hover {
+            transform: translateY(-10px) scale(1.3);
+            color: var(--accent);
+            filter: drop-shadow(0 0 15px var(--accent));
+        }
+
+        #matrix-canvas, #car-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; display: none; }
+        [data-theme="matrix"] #matrix-canvas { display: block; opacity: 0.4; }
+        [data-theme="3dcar"] #car-layer { display: block; }
+
+        .theme-panel { background: rgba(0, 0, 0, 0.6); padding: 8px 15px; border-radius: 30px; display: flex; gap: 8px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .theme-dot { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 2px solid #fff; transition: 0.3s; }
+        .user-bar { background: rgba(0, 0, 0, 0.5); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(15px); position: sticky; top: 0; z-index: 1000; }
+        .logout-btn { background: #ff4d4d; color: white; text-decoration: none; padding: 6px 12px; border-radius: 5px; font-size: 12px; }
+        h1.main-head { text-align: center; color: var(--accent); margin-top: 25px; font-family: 'Orbitron', sans-serif; letter-spacing: 3px; text-shadow: 0 0 10px var(--text-glow); }
+        
+        .box { width: 92%; max-width: 800px; margin: 20px auto; padding: 20px; border-radius: 18px; background: var(--box-bg); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); }
+        .upload-card { border: 2px dashed var(--accent); text-align: center; }
+        .upload-btn, .run { background: var(--accent); color: #000; font-weight: bold; border:none; border-radius:8px; cursor:pointer; padding: 12px; width: 100%; }
+        
+        .bottom-title { position: absolute; bottom: 85px; width: 100%; text-align: center; pointer-events: none; }
+        .jubayer-text {
+            font-size: clamp(25px, 6vw, 45px); font-weight: 900;
+            font-family: 'Orbitron', sans-serif; text-transform: uppercase; letter-spacing: 8px;
+            background: linear-gradient(to bottom, #fff, var(--accent));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 15px var(--text-glow));
+            animation: floating 3s ease-in-out infinite;
+        }
+        @keyframes floating { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        .button-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-top: 15px; }
+        .btn-large { padding: 10px; border-radius: 8px; text-decoration: none; text-align: center; transition: 0.3s; font-size: 13px; font-weight: bold; }
+        .stop { background: #ff4757; color: #fff; }
+        pre { background: rgba(0,0,0,0.7); color: var(--accent); padding: 12px; height: 160px; overflow-y: auto; border-radius: 10px; border: 1px solid var(--text-glow); font-size: 11px; margin-top:10px; white-space: pre-wrap; word-wrap: break-word; }
+    </style>
+</head>
+<body data-theme="default">
+
+<canvas id="matrix-canvas"></canvas>
+<div id="car-layer">
+    <div class="car">
+        <svg viewBox="0 0 100 50" fill="var(--accent)"><path d="M15 25h70l-10-15h-50zM10 25h80v10H10z"/><circle cx="25" cy="35" r="7" fill="#000"/><circle cx="75" cy="35" r="7" fill="#000"/></svg>
+    </div>
+</div>
+
+<div class="user-bar">
+    <div class="theme-panel">
+        <div class="theme-dot" style="background: #00d2ff;" onclick="setTheme('default')"></div>
+        <div class="theme-dot" style="background: #ff00ff;" onclick="setTheme('cyber')"></div>
+        <div class="theme-dot" style="background: #00ff41;" onclick="setTheme('matrix')"></div>
+        <div class="theme-dot" style="background: #e94560;" onclick="setTheme('3dcar')"></div>
+        <div class="theme-dot" style="background: #fb8c00;" onclick="setTheme('sunset')"></div>
+    </div>
+    <a href="/logout" class="logout-btn">Logout</a>
+</div>
+
+<h1 class="main-head">NAYEM OFCL HOSTING PANEL</h1>
+
+<div class="box upload-card">
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" id="fileInput" accept=".zip" required style="display:none;">
+        <label for="fileInput" id="fileNameDisplay" style="cursor:pointer; display:block; margin-bottom:12px; opacity:0.8;">📁 SELECT PROJECT ZIP</label>
+        <button type="submit" class="upload-btn">DEPLOY NOW</button>
+    </form>
+</div>
+
+{% for app in apps %}
+<div class="box">
+    <h3 style="color: var(--accent); font-family:'Orbitron'; font-size: 14px; display: flex; align-items: center;">
+        📦 {{ app.name }}
+        <span id="status-{{ app.name }}" class="status-badge status-offline">● OFFLINE</span>
+    </h3>
+    <div class="button-group">
+        <a href="/run/{{ app.name }}" class="btn-large run">▶ Run</a>
+        <a href="/stop/{{ app.name }}" class="btn-large stop">🛑 Stop</a>
+        <a href="/restart/{{ app.name }}" class="btn-large btn-action" style="background:#f39c12; color: #000;">🔄 Restart</a>
+        <a href="/delete/{{ app.name }}" class="btn-large btn-action" style="background:#555; color:#fff" onclick="return confirm('Delete?')">🗑 Delete</a>
+    </div>
+    <pre id="log-{{ app.name }}">System waiting for execution...</pre>
+</div>
+{% endfor %}
+
+<div class="bottom-title">
+    <h1 class="jubayer-text">POWERED BY N4YEM OFCL</h1>
+</div>
+
+<div class="social-bar">
+    <a href="https://t.me/@nayemsheikh2026" target="_blank" class="social-icon"><i class="fa-brands fa-telegram"></i></a>
+    <a href="https://www.tiktok.com/@nayemsheikh2026?_r=1&_t=ZS-93KU5huJbua" target="_blank" class="social-icon"><i class="fa-brands fa-tiktok"></i></a>
+    <a href="https://www.youtube.com/@N4YEM_OFCL" target="_blank" class="social-icon"><i class="fa-brands fa-youtube"></i></a>
+    <a href="javascript:void(0)" onclick="shareSystem()" class="social-icon"><i class="fa-solid fa-share-nodes"></i></a>
+</div>
+
+<script>
+    function setTheme(themeName) {
+        document.body.setAttribute('data-theme', themeName);
+        localStorage.setItem('selectedTheme', themeName);
+    }
+    const savedTheme = localStorage.getItem('selectedTheme');
+    if (savedTheme) setTheme(savedTheme);
+
+    function shareSystem() {
+        if (navigator.share) {
+            navigator.share({ title: 'NAYEM OFCL Hosting Panel', url: window.location.href }).catch(console.error);
+        } else {
+            alert("Copy Link: " + window.location.href);
+        }
+    }
+
+    // --- রিয়েল-টাইম লগ এবং স্ট্যাটাস চেক ---
+    function updateSystem() {
+        const logBoxes = document.querySelectorAll('pre[id^="log-"]');
+        logBoxes.forEach(box => {
+            const appName = box.id.replace('log-', '');
+            fetch(`/get_log/${appName}`)
+                .then(res => res.json())
+                .then(data => {
+                    // লগ বক্স আপডেট (যদি নতুন লগ থাকে)
+                    if (box.innerText !== data.log) {
+                        box.innerText = data.log;
+                        box.scrollTop = box.scrollHeight;
+                    }
+                    
+                    // স্ট্যাটাস ব্যাজ আপডেট (RUNNING বা OFFLINE)
+                    const statusBadge = document.getElementById(`status-${appName}`);
+                    if (data.status === "RUNNING") {
+                        statusBadge.innerText = "● RUNNING";
+                        statusBadge.className = "status-badge status-running";
+                    } else {
+                        statusBadge.innerText = "● OFFLINE";
+                        statusBadge.className = "status-badge status-offline";
+                    }
+                })
+                .catch(err => console.error(err));
+        });
+    }
+    setInterval(updateSystem, 1000); // ক্লাউড হোস্টিংয়ের জন্য ১ সেকেন্ড রাখা ভালো
+
+    // Matrix Rain
+    const canvas = document.getElementById('matrix-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const chars = "01";
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
+    function drawMatrix() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--accent');
+        ctx.font = fontSize + "px monospace";
+        for (let i = 0; i < drops.length; i++) {
+            const text = chars[Math.floor(Math.random() * chars.length)];
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+            drops[i]++;
+        }
+    }
+    setInterval(drawMatrix, 50);
+
+    document.getElementById('fileInput').addEventListener('change', function() {
+        if (this.files[0]) document.getElementById('fileNameDisplay').innerText = "✅ " + this.files[0].name;
+    });
+</script>
+</body>
+  </html>
+  
