@@ -2,7 +2,7 @@ from flask import Flask, render_template, render_template_string, request, redir
 import os, zipfile, subprocess, shutil, json, time, io
 
 app = Flask(__name__)
-app.secret_key = "jubayer_hosting_v5_final_pro"
+app.secret_key = "nayem_hosting_v5_final_pro"
 
 UPLOAD_FOLDER = "uploads"
 DB_FILE = "database.json"
@@ -12,18 +12,18 @@ processes = {}
 
 def load_db():
     if not os.path.exists(DB_FILE):
-        default = {"user_pw": "ghost34", "users": {}, "start_times": {}}
+        default = {"user_pw": "nm42", "users": {}, "start_times": {}}
         with open(DB_FILE, "w") as f: json.dump(default, f)
         return default
     with open(DB_FILE, "r") as f:
         try:
             data = json.load(f)
             if "users" not in data: data["users"] = {}
-            if "user_pw" not in data: data["user_pw"] = "ghost34"
+            if "user_pw" not in data: data["user_pw"] = "nm42"
             if "start_times" not in data: data["start_times"] = {}
             return data
         except:
-            return {"user_pw": "ghost34", "users": {}, "start_times": {}}
+            return {"user_pw": "nm42", "users": {}, "start_times": {}}
 
 def save_db(data):
     temp_db = DB_FILE + ".tmp"
@@ -31,7 +31,7 @@ def save_db(data):
         json.dump(data, f, indent=4)
     os.replace(temp_db, DB_FILE)
 
-ADMIN_PASS = "2332"
+ADMIN_PASS = "4242"
 
 # --- LOGIN PAGE HTML ---
 LOGIN_HTML = '''
